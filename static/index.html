@@ -109,7 +109,7 @@
             <tr v-for="row in dataRows">
               <td>{{ row[0] }}</td>
               <td>{{ row[1] }}</td>
-              <td>{{ row[2] }} hours</td>
+              <td>{{ formatNumber(row[2]) }} hours</td>
             </tr>
           </tbody>
         </table>

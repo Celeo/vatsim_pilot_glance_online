@@ -51,6 +51,9 @@ Vue.createApp({
         this.fetchData();
       }, 15_000);
     },
+    formatNumber(num) {
+      return Math.round(num).toLocaleString();
+    },
   },
   watch: {
     airport() {
