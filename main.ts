@@ -1,4 +1,12 @@
 import { Application, colors, log, parseArgs, Router } from "./deps.ts";
+import {
+  filterPilotDistance,
+  getOnlinePilots,
+  getTimes,
+  getV3Url,
+} from "./api.ts";
+import { debug } from "https://deno.land/std@0.151.0/log/mod.ts";
+
 const { green } = colors;
 
 const HOSTNAME = "0.0.0.0";
@@ -14,9 +22,12 @@ export interface CliFlags {
 /**
  * Create the server, its endpoints, and the handlers, and launch.
  */
-function main(): void {
+async function main(): Promise<void> {
   const app = new Application();
   const router = new Router();
+  const v3Url = await getV3Url();
+  log.debug(`Using V3 URL ${v3Url}`);
+  const pilotDataCache: Record<number, number> = {};
 
   // ~~~~~~~
   // Logging
@@ -48,9 +59,19 @@ function main(): void {
     // ~~~~~~~~
     // API root
     // ~~~~~~~~
-    .get("/stuff", (context) => {
-      context.response.body = "Hello world";
-      context.response.status = 200;
+    .get("/data/:identifier", async (context) => {
+      const pilots = await getOnlinePilots(v3Url);
+      log.debug(`${pilots.length} pilots online`);
+      const inRange = filterPilotDistance(
+        pilots,
+        context.params.identifier,
+        20.0
+      );
+      log.debug(
+        `${inRange.length} pilots within range of ${context.params.identifier}`
+      );
+      const times = await getTimes(inRange, pilotDataCache);
+      context.response.body = JSON.stringify(times);
     });
 
   app.use(router.routes());
@@ -109,6 +130,6 @@ FLAGS:
         },
       },
     });
-    main();
+    await main();
   }
 }
