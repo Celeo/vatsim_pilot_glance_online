@@ -6,27 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VATSIM Pilot Glance</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      href="https://cdn.jsdelivr.net/npm/purecss@2.1.0/build/pure-min.css"
+      integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH"
       crossorigin="anonymous"
     />
+    <style>
+      body {
+        font-size: 1.2em;
+        background-color: #272e31;
+        color: #eceff1;
+        padding-top: 1rem;
+      }
+      .container {
+        width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
   </head>
-  <body style="background-color: #272e31; color: #eceff1; padding-top: 1rem">
-    <div style="width: 85%; margin-left: auto; margin-right: auto">
+  <body>
+    <div class="container">
       <div id="app">
         <h2>VATSIM Pilot Glance</h2>
-        <p style="padding-top: 0.5rem; margin-bottom: 0.5rem">
-          Shows some information about pilots within 20 nm of the selected
+        <p>
+          Shows network pilot time for pilots within 20 nm of the selected
           airport.
           <br />
           Intended for use in seeing newer pilots early and planning extra time
           to help them.
         </p>
-        <div class="row">
-          <div class="col-2">
-            <form @submit.prevent="fetchData">
-              <div class="mt-2">
+        <div class="pure-g">
+          <div class="pure-u-1-3">
+            <form
+              @submit.prevent="fetchData"
+              class="pure-form pure-form-stacked"
+            >
+              <div style="margin-top: 0.5rem">
                 <label for="identifier" class="form-label">
                   Airport identifier
                 </label>
@@ -42,11 +58,26 @@
               </div>
             </form>
           </div>
+          <div class="pure-u-1-3"></div>
+          <div class="pure-u-1-3">
+            <p
+              style="color: #b2ff59; display: none; font-size: 120%"
+              v-show="timer !== null"
+            >
+              Automatically refreshing
+            </p>
+          </div>
         </div>
+        <p style="color: red; display: none" v-show="validAirport === false">
+          That airport was not found. Try another.
+        </p>
+        <p style="color: red; display: none" v-show="error">
+          An error occurred. Try refreshing the page.
+        </p>
         <table
-          v-show="rows.length > 0"
-          class="table"
-          style="color: white !important; margin-top: 3rem; display: none"
+          v-show="dataRows.length > 0"
+          class="pure-table"
+          style="margin-top: 2rem; width: 100%; display: none"
         >
           <thead>
             <tr>
@@ -56,13 +87,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in rows">
+            <tr v-for="row in dataRows">
               <td>{{ row[0] }}</td>
               <td>{{ row[1] }}</td>
               <td>{{ row[2] }} hours</td>
             </tr>
           </tbody>
         </table>
+        <p
+          style="color: orange; display: none"
+          v-show="timer !== null && dataRows.length === 0"
+        >
+          No pilots were found near the airport.
+        </p>
       </div>
       <footer
         style="
@@ -74,7 +111,7 @@
         "
       >
         Not endorsed by VATSIM, VATUSA, or anyone else. Not intended for
-        real-world aviation use.
+        real-world aviation.
       </footer>
     </div>
     <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>

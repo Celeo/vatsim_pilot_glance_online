@@ -1,7 +1,4 @@
-// TODO
-const AIRPORT_LOCATIONS: Record<string, [number, number]> = {
-  KSAN: [32.7338, -117.1933],
-};
+import { AIRPORTS } from "./airports.ts";
 
 export interface StatusData {
   v3: Array<string>;
@@ -36,6 +33,9 @@ export interface RatingsData {
   pilot: number;
 }
 
+/**
+ * Get the VATSIM live V3 URL.
+ */
 export async function getV3Url(): Promise<string> {
   const response = await fetch("https://status.vatsim.net/status.json");
   if (response.status !== 200) {
@@ -103,7 +103,7 @@ export function filterPilotDistance(
   airport: string,
   distance: number
 ): Array<Pilot> {
-  const airportLocation = AIRPORT_LOCATIONS[airport];
+  const airportLocation = AIRPORTS[airport];
   if (airportLocation === undefined) {
     throw new Error(`Unsupported airport "${airport}"`);
   }
@@ -140,7 +140,6 @@ export async function getTimes(
       }
     }
     if (cached !== undefined) {
-      console.log(`Cache hit on CID ${pilot.cid}`);
       ret.push([pilot.callsign, aircraftType, cache[pilot.cid]]);
       return;
     }

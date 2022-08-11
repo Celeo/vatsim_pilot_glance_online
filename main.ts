@@ -5,7 +5,7 @@ import {
   getTimes,
   getV3Url,
 } from "./api.ts";
-import { debug } from "https://deno.land/std@0.151.0/log/mod.ts";
+import { AIRPORTS } from "./airports.ts";
 
 const { green } = colors;
 
@@ -55,25 +55,31 @@ async function main(): Promise<void> {
     }
   });
 
+  // ~~~~~~~~~~~~~~~~
+  // Configure router
+  // ~~~~~~~~~~~~~~~~
   router
-    // ~~~~~~~~
-    // API root
-    // ~~~~~~~~
+    .get("/valid/:identifier", (context) => {
+      const airport = context.params.identifier.toUpperCase();
+      if (AIRPORTS[airport] !== undefined) {
+        context.response.status = 200;
+      } else {
+        context.response.status = 404;
+      }
+    })
     .get("/data/:identifier", async (context) => {
+      const airport = context.params.identifier;
       const pilots = await getOnlinePilots(v3Url);
       log.debug(`${pilots.length} pilots online`);
-      const inRange = filterPilotDistance(
-        pilots,
-        context.params.identifier,
-        20.0
-      );
-      log.debug(
-        `${inRange.length} pilots within range of ${context.params.identifier}`
-      );
+      const inRange = filterPilotDistance(pilots, airport, 20.0);
+      log.debug(`${inRange.length} pilots within range of ${airport}`);
       const times = await getTimes(inRange, pilotDataCache);
       context.response.body = JSON.stringify(times);
     });
 
+  // ~~~~~~~~~~~~~~~~~~
+  // Connect the router
+  // ~~~~~~~~~~~~~~~~~~
   app.use(router.routes());
   app.use(router.allowedMethods());
 

@@ -2,9 +2,10 @@ Vue.createApp({
   data() {
     return {
       airport: "",
-      rows: [],
-      didFetch: false,
+      validAirport: true,
+      error: false,
       timer: null,
+      dataRows: [],
     };
   },
   methods: {
@@ -19,14 +20,44 @@ Vue.createApp({
       }
     },
     async fetchData() {
-      const response = await fetch(`/data/${this.airport.toUpperCase()}`);
-      const data = await response.json();
-      while (this.rows.length > 0) {
-        this.rows.pop();
+      const ap = this.airport.toUpperCase();
+      const validResponse = await fetch(`/valid/${ap}`);
+      if (validResponse.status === 404) {
+        this.validAirport = false;
+        return;
       }
-      data.forEach((row) => this.rows.push(row));
-      this.didFetch = true;
-      // TODO setInterval for refreshing data
+      this.validAirport = true;
+      const dataResponse = await fetch(`/data/${ap}`);
+      if (dataResponse.status !== 200) {
+        this.error = true;
+        if (this.timer !== null) {
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+        console.error(
+          `Got status ${
+            dataResponse.status
+          } from server: ${await dataResponse.text()}`
+        );
+        return;
+      }
+      this.error = false;
+      const data = await dataResponse.json();
+      while (this.dataRows.length > 0) {
+        this.dataRows.pop();
+      }
+      data.forEach((row) => this.dataRows.push(row));
+      this.timer = setTimeout(() => {
+        this.fetchData();
+      }, 15_000);
+    },
+  },
+  watch: {
+    airport() {
+      if (this.timer !== null) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
     },
   },
 }).mount("#app");
