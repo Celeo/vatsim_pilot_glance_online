@@ -73,7 +73,9 @@ async function main(): Promise<void> {
       log.debug(`${pilots.length} pilots online`);
       const inRange = filterPilotDistance(pilots, airport, 20.0);
       log.debug(`${inRange.length} pilots within range of ${airport}`);
-      const times = await getTimes(inRange, pilotDataCache);
+      const times = (await getTimes(inRange, pilotDataCache)).sort(
+        (a, b): number => (a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0)
+      );
       context.response.body = JSON.stringify(times);
     });
 
