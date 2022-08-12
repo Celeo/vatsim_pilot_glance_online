@@ -14,4 +14,4 @@ compile:
   @deno compile {{permissions}} {{runfile}}
 
 deploy: compile
-  rsync -avz vatsim_pilot_glance_online static do:/srv/vatsim_pilot_glance/
+  rsync -avz --progress vatsim_pilot_glance_online static do:/srv/vatsim_pilot_glance/
