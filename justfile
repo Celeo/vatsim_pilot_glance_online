@@ -18,4 +18,4 @@ compile:
   @tar -cpzf {{compiled_name}}.tar.gz {{compiled_name}} static
 
 deploy: compile
-  rsync -avz --progress {{compiled_name}} static do:/srv/vatsim_pilot_glance/
+  rsync -avz --progress {{compiled_name}}.tar.gz do:/srv/vatsim_pilot_glance/
