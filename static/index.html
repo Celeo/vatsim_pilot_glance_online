@@ -45,7 +45,7 @@
   </head>
   <body>
     <div class="container">
-      <div id="app">
+      <div x-data="app">
         <h2>VATSIM Pilot Glance</h2>
         <p>
           Shows network pilot time for pilots within 20 nm of the selected
@@ -60,10 +60,7 @@
         </p>
         <div class="pure-g">
           <div class="pure-u-1-3">
-            <form
-              @submit.prevent="fetchData"
-              class="pure-form pure-form-stacked"
-            >
+            <form x-on:submit="fetchData" class="pure-form pure-form-stacked">
               <div style="margin-top: 0.5rem">
                 <label for="identifier" class="form-label">
                   Airport identifier
@@ -72,8 +69,8 @@
                   type="text"
                   class="form-control"
                   id="identifier"
-                  v-model="airport"
-                  @keyPress="updateAirport"
+                  x-model="airport"
+                  x-on:keyPress="updateAirport"
                   placeholder="KSAN"
                   style="text-transform: uppercase"
                 />
@@ -82,19 +79,19 @@
           </div>
           <div class="pure-u-1-3"></div>
           <div class="pure-u-1-3">
-            <p class="refresher" style="display: none" v-show="timer !== null">
+            <p class="refresher" style="display: none" x-show="timer !== null">
               Automatically refreshing
             </p>
           </div>
         </div>
-        <p style="color: red; display: none" v-show="validAirport === false">
+        <p style="color: red; display: none" x-show="!validAirport">
           That airport was not found. Try another.
         </p>
-        <p style="color: red; display: none" v-show="error">
+        <p style="color: red; display: none" x-show="error">
           An error occurred. Try refreshing the page.
         </p>
         <table
-          v-show="dataRows.length > 0"
+          x-show="dataRows.length > 0"
           class="pure-table"
           style="display: none"
         >
@@ -106,22 +103,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in dataRows">
-              <td>{{ row[0] }}</td>
-              <td>{{ row[1] }}</td>
-              <td>{{ formatNumber(row[2]) }} hours</td>
-            </tr>
+            <template x-for="row in dataRows">
+              <tr>
+                <td x-text="row[0]"></td>
+                <td x-text="row[1]"></td>
+                <td><span x-text="row[2]"></span> hours</td>
+              </tr>
+            </template>
           </tbody>
         </table>
         <p
           style="color: orange; display: none"
-          v-show="timer !== null && dataRows.length === 0"
+          x-show="timer !== null && dataRows.length === 0"
         >
           No pilots were found near the airport.
         </p>
       </div>
     </div>
-    <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
     <script src="/app.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.10.3/dist/cdn.min.js"></script>
   </body>
 </html>
