@@ -1,6 +1,9 @@
+const initialLocation =
+  new URLSearchParams(window.location.search).get("l") ?? "";
+
 document.addEventListener("alpine:init", () => {
   Alpine.data("app", () => ({
-    airport: "",
+    airport: initialLocation,
     validAirport: true,
     error: false,
     timer: null,
@@ -59,4 +62,13 @@ document.addEventListener("alpine:init", () => {
       }
     },
   }));
+
+  if (initialLocation !== "") {
+    console.log(`Initializing airport to ${initialLocation}`);
+    setTimeout(() => {
+      document
+        .querySelector("#airport-form")
+        .dispatchEvent(new CustomEvent("airportpreload"));
+    }, 500);
+  }
 });
