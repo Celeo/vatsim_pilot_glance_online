@@ -17,7 +17,7 @@ compile:
   @zip -r {{compiled_name}}.zip {{compiled_name}} static
   @tar -cpzf {{compiled_name}}.tar.gz {{compiled_name}} static
 
-deploy: compile
+deploy: clean compile
   rsync -avz --progress {{compiled_name}}.tar.gz do:/srv/vatsim_pilot_glance/
 
 clean:
