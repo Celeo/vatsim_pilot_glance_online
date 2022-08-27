@@ -41,13 +41,35 @@
         margin-top: 2rem;
         width: 100%;
       }
+      .title > h2 {
+        float: left;
+      }
+      .title > p {
+        float: right;
+        font-size: 50%;
+      }
+      .title::after {
+        content: "";
+        clear: both;
+        display: block;
+      }
+      .explanation {
+        margin-top: 0;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div x-data="app">
-        <h2>VATSIM Pilot Glance</h2>
-        <p>
+        <div class="title">
+          <h2>VATSIM Pilot Glance</h2>
+          <p>
+            <a href="https://github.com/Celeo/vatsim_pilot_glance_online"
+              >Source on GitHub</a
+            >
+          </p>
+        </div>
+        <p class="explanation">
           Shows network pilot time for pilots within 20 nm of the selected
           airport.
           <br />
