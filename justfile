@@ -19,3 +19,6 @@ compile:
 
 deploy: compile
   rsync -avz --progress {{compiled_name}}.tar.gz do:/srv/vatsim_pilot_glance/
+
+clean:
+  @rm -f {{compiled_name}} {{compiled_name}}.zip {{compiled_name}}.tar.gz
