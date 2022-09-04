@@ -1,11 +1,13 @@
-import { Application, colors, log, parseArgs, Router } from "./deps.ts";
 import {
-  filterPilotDistance,
-  getOnlinePilots,
-  getTimes,
-  getV3Url,
-} from "./api.ts";
-import { AIRPORTS } from "./airports.ts";
+  Application,
+  colors,
+  getAirportsMap,
+  getVatsimInstance,
+  log,
+  parseArgs,
+  Router,
+} from "./deps.ts";
+import { filterPilotDistance, getOnlinePilots, getTimes } from "./util.ts";
 
 const { green } = colors;
 
@@ -25,8 +27,7 @@ export interface CliFlags {
 async function main(): Promise<void> {
   const app = new Application();
   const router = new Router();
-  const v3Url = await getV3Url();
-  log.debug(`Using V3 URL ${v3Url}`);
+  const vatsim = await getVatsimInstance();
   const pilotDataCache: Record<number, number> = {};
 
   // ~~~~~~~
@@ -34,9 +35,11 @@ async function main(): Promise<void> {
   // ~~~~~~~
   app.use(async (context, next) => {
     log.debug(
-      `Request to ${green(context.request.url.pathname)} from ${green(
-        context.request.ip
-      )}`
+      `Request to ${green(context.request.url.pathname)} from ${
+        green(
+          context.request.ip,
+        )
+      }`,
     );
     await next();
     log.debug(`Returning HTTP ${green(`${context.response.status}`)}`);
@@ -61,7 +64,7 @@ async function main(): Promise<void> {
   router
     .get("/valid/:identifier", (context) => {
       const airport = context.params.identifier.toUpperCase();
-      if (AIRPORTS[airport] !== undefined) {
+      if (getAirportsMap()[airport] !== undefined) {
         context.response.status = 200;
       } else {
         context.response.status = 404;
@@ -69,12 +72,12 @@ async function main(): Promise<void> {
     })
     .get("/data/:identifier", async (context) => {
       const airport = context.params.identifier;
-      const pilots = await getOnlinePilots(v3Url);
+      const pilots = await getOnlinePilots(vatsim);
       log.debug(`${pilots.length} pilots online`);
       const inRange = filterPilotDistance(pilots, airport, 20.0);
       log.debug(`${inRange.length} pilots within range of ${airport}`);
       const times = (await getTimes(inRange, pilotDataCache)).sort(
-        (a, b): number => (a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0)
+        (a, b): number => (a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0),
       );
       context.response.body = JSON.stringify(times);
     });
@@ -128,7 +131,7 @@ FLAGS:
       handlers: {
         console: new log.handlers.ConsoleHandler(
           flags.debug ? "DEBUG" : "INFO",
-          { formatter: "[{levelName}] {msg}" }
+          { formatter: "[{levelName}] {msg}" },
         ),
       },
       loggers: {
