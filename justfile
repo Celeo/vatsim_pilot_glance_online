@@ -18,7 +18,7 @@ compile:
   @tar -cpzf {{compiled_name}}.tar.gz {{compiled_name}} static
 
 deploy: clean compile
-  rsync -avz --progress {{compiled_name}}.tar.gz do:/srv/vatsim_pilot_glance/
+  rsync -avz --progress {{compiled_name}}.tar.gz "$SSH_HOST_NAME:/srv/vatsim_pilot_glance/"
 
 clean:
   @rm -f {{compiled_name}} {{compiled_name}}.zip {{compiled_name}}.tar.gz
