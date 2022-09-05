@@ -7,7 +7,12 @@ import {
   parseArgs,
   Router,
 } from "./deps.ts";
-import { filterPilotDistance, getOnlinePilots, getTimes } from "./util.ts";
+import {
+  filterPilotDistance,
+  getOnlinePilots,
+  getTimes,
+  TimeCache,
+} from "./util.ts";
 
 const { green } = colors;
 
@@ -28,7 +33,7 @@ async function main(): Promise<void> {
   const app = new Application();
   const router = new Router();
   const vatsim = await getVatsimInstance();
-  const pilotDataCache: Record<number, number> = {};
+  const pilotDataCache = new TimeCache();
 
   // ~~~~~~~
   // Logging
