@@ -3,7 +3,6 @@ import {
   getRatingsTimes,
   getV3Data,
   haversineDistance,
-  log,
   Pilot,
   Vatsim,
 } from "./deps.ts";
