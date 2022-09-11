@@ -1,0 +1,48 @@
+body {
+  font-size: 1.2em;
+  background-color: #272e31;
+  color: #eceff1;
+  padding-top: 1rem;
+}
+.container {
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+}
+p {
+  margin-bottom: 0;
+}
+.disclaimer {
+  font-size: 50%;
+  padding-bottom: 1rem;
+}
+label {
+  font-size: 85%;
+}
+.refresher {
+  color: #b2ff59;
+  font-size: 110%;
+}
+table {
+  margin-top: 2rem;
+  width: 100%;
+}
+.title > h2 {
+  float: left;
+}
+.title > p {
+  float: right;
+  font-size: 50%;
+}
+.title::after {
+  content: "";
+  clear: both;
+  display: block;
+}
+.explanation {
+  margin-top: 0;
+}
+a {
+  color: cyan;
+  text-decoration: none;
+}
