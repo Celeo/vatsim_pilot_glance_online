@@ -8,8 +8,8 @@ export {
   getRatingsTimes,
   getV3Data,
   haversineDistance,
-} from "https://deno.land/x/vatsim_wrapper@v0.2.0/mod.ts";
+} from "https://deno.land/x/vatsim_wrapper@v0.2.1/mod.ts";
 export type {
   Pilot,
   Vatsim,
-} from "https://deno.land/x/vatsim_wrapper@v0.2.0/mod.ts";
+} from "https://deno.land/x/vatsim_wrapper@v0.2.1/mod.ts";
